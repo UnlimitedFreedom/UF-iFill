@@ -14,49 +14,56 @@ import com.github.pocketkid2.fill.commands.FillCommand;
 import com.github.pocketkid2.fill.listeners.FillListener;
 
 public class FillPlugin extends JavaPlugin {
+    
+    public static FillPlugin plugin;
 
-	public boolean MESSAGE;
-	public boolean SOUND;
-	public List<String> WORLDS;
+    public boolean MESSAGE;
+    public boolean SOUND;
+    public List<String> WORLDS;
 
-	@Override
-	public void onEnable() {
-		// Register command
-		getCommand("fill").setExecutor(new FillCommand(this));
+    @Override
+    public void onLoad() {
+        FillPlugin.plugin = this;
+    }
+    
+    @Override
+    public void onEnable() {
+        // Register command
+        plugin.getCommand("fill").setExecutor(new FillCommand(this));
 
-		// Register listener
-		getServer().getPluginManager().registerEvents(new FillListener(this), this);
+        // Register listener
+        plugin.getServer().getPluginManager().registerEvents(new FillListener(this), this);
 
-		// Save default config and load values
-		saveDefaultConfig();
-		MESSAGE = getConfig().getBoolean("fill-message", true);
-		SOUND = getConfig().getBoolean("fill-sound", true);
-		WORLDS = getConfig().getStringList("worlds");
+        // Save default config and load values
+        plugin.saveDefaultConfig();
+        MESSAGE = plugin.getConfig().getBoolean("fill-message", true);
+        SOUND = plugin.getConfig().getBoolean("fill-sound", true);
+        WORLDS = plugin.getConfig().getStringList("worlds");
 
-		// Log status
-		getLogger().info("Done!");
-	}
+        // Log status
+        plugin.getLogger().info("Done!");
+    }
 
-	@Override
-	public void onDisable() {
-		// Log status
-		getLogger().info("Done!");
-	}
+    @Override
+    public void onDisable() {
+        // Log status
+        plugin.getLogger().info("Done!");
+    }
 
-	public String getWandName() {
-		return ChatColor.GREEN + "Fill Wand (Right click to use)";
-	}
+    public String getWandName() {
+        return ChatColor.GREEN + "Fill Wand (Right click to use)";
+    }
 
-	public void fill(Block block, ItemStack stack) {
-		// Strip wand name
-		ItemMeta meta = stack.getItemMeta();
-		meta.setDisplayName("");
-		stack.setItemMeta(meta);
+    public void fill(Block block, ItemStack stack) {
+        // Strip wand name
+        ItemMeta meta = stack.getItemMeta();
+        meta.setDisplayName("");
+        stack.setItemMeta(meta);
 
-		// Fill all slots
-		Inventory inv = ((InventoryHolder) block.getState()).getInventory();
-		for (int i = 0; i < inv.getSize(); i++) {
-			inv.setItem(i, stack);
-		}
-	}
+        // Fill all slots
+        Inventory inv = ((InventoryHolder) block.getState()).getInventory();
+        for (int i = 0; i < inv.getSize(); i++) {
+            inv.setItem(i, stack);
+        }
+    }
 }
